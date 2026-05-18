@@ -1,0 +1,32 @@
+# API Summary
+
+- `GET /health` service health.
+- `GET /interfaces` capture interface candidates.
+- `POST /capture/start` start demo or live capture.
+- `POST /capture/stop` stop capture.
+- `GET /capture/status` current capture status.
+- `GET /packets/history?limit=250` recent packet metadata.
+- `WS /packets/live` live packet metadata stream.
+- `GET /devices` discovered devices.
+- `GET /devices/{id}` device detail.
+- `GET /devices/{id}/context` related packets, alerts, and scans for a device.
+- `POST /scan/nmap` run an Nmap scan and ingest discovered hosts/open ports.
+- `GET /scan/history` recent Nmap scans with new/changed host diff metadata.
+- `POST /pcap/upload` upload `.pcap` or `.pcapng` for offline analysis.
+- `POST /simulate/{scenario}` simulate `port_scan`, `dns_tunnel`, `arp_spoof`, or `beaconing`.
+- `GET /alerts?unresolved_only=false` alert timeline.
+- `POST /alerts/{alert_id}/resolve` resolve an alert.
+- `POST /alerts/{alert_id}/block` dry-run or execute block action for alert source IP.
+- `WS /alerts/live` live alert stream.
+- `POST /block/ip` record or execute an IP block.
+- `POST /block/mac` record a MAC block action.
+- `GET /topology` graph nodes and edges.
+- `GET /stats` dashboard counters.
+- `GET /forensics/export` JSON evidence bundle.
+- `GET /forensics/report` Markdown incident report with SHA-256.
+- `GET /forensics/report?format=html` HTML evidence report.
+- `GET /forensics/report?format=pdf` PDF evidence report.
+- `GET /forensics/csv/{kind}` CSV export for `devices`, `alerts`, `packets`, or `scans`.
+- `GET /forensics/hash` SHA-256 hash of the current evidence bundle.
+- `POST /ai/analyze?model=llama3.2` Ollama-backed incident analysis.
+- `GET /ai/report.pdf?model=llama3.2` PDF export of Ollama analysis.

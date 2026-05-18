@@ -1,216 +1,193 @@
-# PROBE – Network Forensics & Intrusion Prevention System
+# PROBE - Network Forensics & Intrusion Prevention System
 
-![PROBE Banner](https://img.shields.io/badge/Security-Network%20Forensics-red?style=for-the-badge)
-![Python](https://img.shields.io/badge/Built%20With-Python-blue?style=for-the-badge)
-![Status](https://img.shields.io/badge/Status-Active-success?style=for-the-badge)
+PROBE is a hackathon-ready, agentless network forensics and intrusion detection platform built for **CT-DFIR-03 - Network Forensics**. It helps analysts discover devices, inspect traffic metadata, detect suspicious behavior, generate forensic evidence, and demonstrate response actions without installing agents on client devices.
 
-## Overview
+## What It Does
 
-**PROBE** is an **agentless network monitoring and forensics solution** designed to detect, analyze, and mitigate malicious network activity in real time.
+- Captures or simulates packet metadata through a FastAPI backend
+- Discovers real devices and open ports using installed Nmap
+- Uploads and analyzes `.pcap` / `.pcapng` files from Wireshark
+- Maps devices by IP, MAC, hostname, vendor, open ports, and risk score
+- Detects port scans, ARP spoofing, DNS tunneling, anonymizer endpoints, beaconing, exposed services, and new devices
+- Shows live traffic, devices, topology, alerts, scan history, and forensic evidence in a React dashboard
+- Exports JSON, CSV, HTML, PDF, SHA-256 evidence hash, and Ollama AI analysis reports
+- Provides dry-run blocking commands for alert sources
 
-The tool focuses on:
-- Detecting **IP spoofing**
-- Identifying **MAC spoofing**
-- Monitoring **packet anomalies**
-- Tracing hidden/internal devices behind public IPs
-- Terminating malicious requests automatically
-- Providing integrated **IDS/IPS capabilities**
+## Current Features
 
-PROBE enables organizations to monitor suspicious traffic patterns without requiring endpoint agents, making deployment lightweight and scalable.
+### Backend
 
----
+- FastAPI REST and WebSocket API
+- Scapy-based packet parsing and live capture scaffolding
+- Built-in `demo0` traffic generator for reliable presentations
+- Real Nmap scan ingestion through `/scan/nmap`
+- PCAP upload analysis through `/pcap/upload`
+- IDS-style detection engine
+- Device mapper and risk scoring
+- Scan history and new/changed host diffs
+- Evidence store with JSON, CSV, HTML, PDF, and hash exports
+- Ollama integration at `http://127.0.0.1:11434`
 
-# Features
+### Frontend
 
-## 🔍 Network Forensics
-- Deep packet inspection
-- Traffic pattern analysis
-- Session tracking
-- Suspicious behavior correlation
+- React + Vite dashboard
+- Live Traffic page with charts, packet table, PCAP upload, and attack simulations
+- Devices page with Nmap scanner, topology, scan history, and device detail panel
+- Alerts page with resolve and dry-run block actions
+- Forensics page with reports, CSV exports, evidence hash, AI analysis, and AI PDF export
 
-## 🛡️ IDS/IPS Engine
-- Intrusion Detection System (IDS)
-- Intrusion Prevention System (IPS)
-- Real-time malicious packet blocking
-- Threat signature detection
-
-## 🧠 Spoofing Detection
-- IP spoofing detection
-- MAC spoofing identification
-- ARP anomaly monitoring
-- Rogue device discovery
-
-## 🌐 Connection Tracing
-- Maps hidden/internal hosts behind NAT/Public IPs
-- Tracks suspicious outbound communications
-- Detects unauthorized external connections
-
-## ⚡ Automated Threat Response
-- Terminates malicious requests
-- Auto-block suspicious endpoints
-- Real-time alert generation
-
-## 📊 Monitoring Dashboard
-- Live traffic monitoring
-- Packet statistics
-- Threat logs
-- Connection analytics
-
----
-
-# Architecture
+## Project Structure
 
 ```text
-                +-------------------+
-                | Network Traffic   |
-                +---------+---------+
-                          |
-                          v
-                +-------------------+
-                | Packet Sniffer    |
-                +---------+---------+
-                          |
-          +---------------+---------------+
-          |                               |
-          v                               v
-+-------------------+        +----------------------+
-| Spoof Detection   |        | Anomaly Detection    |
-| IP/MAC Analysis   |        | IDS/IPS Engine       |
-+---------+---------+        +----------+-----------+
-          |                               |
-          +---------------+---------------+
-                          |
-                          v
-                +-------------------+
-                | Threat Response   |
-                | Block / Terminate |
-                +---------+---------+
-                          |
-                          v
-                +-------------------+
-                | Logs & Dashboard  |
-                +-------------------+
+backend/
+  api/              FastAPI routes
+  capture/          Capture controller and demo traffic
+  detection/        IDS and anomaly rules
+  models/           Pydantic schemas
+  parsers/          Packet parsers
+  services/         Nmap, PCAP, reports, AI, devices, alerts
+  utils/            Vendor lookup helpers
+frontend/
+  src/              React dashboard
+docs/               API, setup, and architecture notes
+demo/               Demo alert assets
+docker/             Dockerfiles
+scripts/            Helper scripts
+tests/              Backend unit/API tests
 ```
 
----
+## Requirements
 
-# Tech Stack
+- Python 3.12+ recommended
+- Node.js 20+
+- Nmap installed and available on `PATH`
+- Npcap/admin privileges for real live capture on Windows
+- Optional: Ollama exposed at `http://127.0.0.1:11434`
 
-- Python
-- Scapy
-- Socket Programming
-- Packet Sniffing APIs
-- IDS/IPS Detection Modules
-- Network Traffic Analysis Tools
+## Quick Start
 
----
+From the repository root:
 
-# Installation
-
-```bash
-# Clone repository
-git clone https://github.com/yourusername/probe-network-forensics.git
-
-# Navigate into project
-cd probe-network-forensics
-
-# Install dependencies
-pip install -r requirements.txt
+```powershell
+python -m venv .venv
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+.venv\Scripts\python.exe -m backend.cli --host 127.0.0.1 --port 8000
 ```
 
----
+In another terminal:
 
-# Usage
-
-```bash
-python main.py
+```powershell
+cd frontend
+npm install
+npm run dev -- --host 127.0.0.1 --port 5173
 ```
 
-### Example Functionalities
-- Start live packet capture
-- Monitor spoofed devices
-- Detect abnormal packet flow
-- Auto-block malicious traffic
+Open:
 
----
-
-# Sample Detection Output
-
-```bash
-[ALERT] IP Spoofing Detected
-Source IP: 192.168.1.20
-MAC Mismatch Found
-
-[WARNING] Suspicious Packet Burst
-Possible DoS Attempt Detected
-
-[ACTION] Malicious Request Terminated
-Blocked Endpoint: 45.xxx.xxx.xxx
+```text
+http://127.0.0.1:5173
 ```
 
----
+API health check:
 
-# Project Objectives
-
-- Improve network visibility
-- Detect hidden malicious activities
-- Prevent spoofing attacks
-- Enable proactive threat mitigation
-- Simplify enterprise network forensics
-
----
-
-# Future Enhancements
-
-- Machine Learning based anomaly detection
-- Web-based monitoring dashboard
-- SIEM integration
-- Distributed sensor support
-- Threat intelligence feeds
-- Real-time alert notifications
-
----
-
-# Security Use Cases
-
-- Enterprise network monitoring
-- SOC environments
-- Threat hunting
-- Incident response
-- Internal traffic investigation
-- Rogue device detection
-
----
-
-# Contributing
-
-Contributions are welcome.
-
-```bash
-# Fork the repository
-# Create feature branch
-git checkout -b feature-name
-
-# Commit changes
-git commit -m "Added new feature"
-
-# Push changes
-git push origin feature-name
+```text
+http://127.0.0.1:8000/health
 ```
 
----
+## Presentation Flow
 
-# License
+1. Start backend and frontend.
+2. Open the dashboard at `http://127.0.0.1:5173`.
+3. Click **Stop** if you want to stop demo traffic.
+4. Go to **Devices** and run an Nmap scan against `127.0.0.1` or an authorized LAN target such as `192.168.1.0/24`.
+5. Show discovered hosts, open ports, risk scores, topology, and scan history.
+6. Go to **Live Traffic** and upload a PCAP or use attack simulation buttons if the network is quiet.
+7. Go to **Alerts** and show detection output plus dry-run blocking.
+8. Go to **Forensics** and export JSON, CSV, HTML, PDF, hash, or AI reports.
 
-This project is licensed under the **Apache License, Version 2.0**.
+Use scans and packet capture only on systems and networks you own or are authorized to assess.
 
-See [LICENSE.txt](LICENSE.txt) for the full license text.
+## Main API Endpoints
 
-**Copyright 2026 ByteNinja**
+- `GET /health`
+- `GET /interfaces`
+- `POST /capture/start`
+- `POST /capture/stop`
+- `GET /packets/history`
+- `WS /packets/live`
+- `GET /devices`
+- `GET /devices/{id}/context`
+- `POST /scan/nmap`
+- `GET /scan/history`
+- `POST /pcap/upload`
+- `POST /simulate/{scenario}`
+- `GET /alerts`
+- `POST /alerts/{id}/resolve`
+- `POST /alerts/{id}/block`
+- `GET /topology`
+- `GET /forensics/export`
+- `GET /forensics/report?format=html`
+- `GET /forensics/report?format=pdf`
+- `GET /forensics/csv/{kind}`
+- `GET /forensics/hash`
+- `POST /ai/analyze`
+- `GET /ai/report.pdf`
 
----
+Full API notes are in [docs/api.md](docs/api.md).
 
-# Author
+## Ollama AI Analysis
 
-**PROBE – Network Forensics & IDS/IPS Solution**  
-Developed for cybersecurity and network defense research by Byteninja.
+The AI analysis features call Ollama at:
+
+```text
+http://127.0.0.1:11434
+```
+
+If Ollama is running in Docker, publish the port to the host:
+
+```powershell
+docker run -d --name ollama -p 11434:11434 ollama/ollama
+```
+
+Then use a model name installed in Ollama, for example `llama3.2`, `llama3`, or `mistral`.
+
+## Testing
+
+```powershell
+.venv\Scripts\python.exe -m pytest
+```
+
+Frontend build:
+
+```powershell
+cd frontend
+npm run build
+```
+
+## Docker
+
+```powershell
+docker compose up --build
+```
+
+## What Not To Commit
+
+The `.gitignore` excludes local virtual environments, dependency folders, frontend build output, pytest cache, local PCAP evidence, generated exports, logs, and scratch files such as `run.txt`.
+
+Commit the source folders and docs:
+
+- `backend/`
+- `frontend/`
+- `docs/`
+- `demo/`
+- `docker/`
+- `scripts/`
+- `tests/`
+- `requirements.txt`
+- `docker-compose.yml`
+- `.gitignore`
+- `README.md`
+
+## License
+
+This project is licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE).
